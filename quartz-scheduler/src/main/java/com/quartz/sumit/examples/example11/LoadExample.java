@@ -1,21 +1,4 @@
-/* 
- * All content copyright Terracotta, Inc., unless otherwise indicated. All rights reserved. 
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not 
- * use this file except in compliance with the License. You may obtain a copy 
- * of the License at 
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0 
- *   
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT 
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- * License for the specific language governing permissions and limitations 
- * under the License.
- * 
- */
- 
-package org.quartz.examples.example11;
+package com.quartz.sumit.examples.example11;
 
 import static org.quartz.DateBuilder.futureDate;
 import static org.quartz.JobBuilder.newJob;
@@ -33,18 +16,15 @@ import org.slf4j.LoggerFactory;
 
 /**
  * This example will spawn a large number of jobs to run
- *
  * This example demonstrates how Quartz can handle a large
  * number of jobs.   This example starts with 500 jobs.  However,
  * this number can be changed by modifying the start scripts.
- *
  * Due to the size of the thread pool (this example uses as thread
  * count of 15), only 15 threads will run concurrently in the
  * scheduler.
- *
  * You can change this parameter in the quartz.properties file.
  * 
- * @author James House, Bill Kratzer
+ * @author Sumit dhanorkar
  */
 public class LoadExample {
 
@@ -65,22 +45,19 @@ public class LoadExample {
 
     // schedule 500 jobs to run
     for (int count = 1; count <= _numberOfJobs; count++) {
-      JobDetail job = newJob(SimpleJob.class).withIdentity("job" + count, "group_1").requestRecovery() // ask scheduler
-                                                                                                       // to re-execute
-                                                                                                       // this job if it
-                                                                                                       // was in
-                                                                                                       // progress when
-                                                                                                       // the scheduler
-                                                                                                       // went down...
-          .build();
+      JobDetail job = newJob(SimpleJob.class)
+              .withIdentity("job" + count, "group_1")
+              .requestRecovery() // ask scheduler
+              .build();
 
       // tell the job to delay some small amount... to simulate work...
       long timeDelay = (long) (java.lang.Math.random() * 2500);
       job.getJobDataMap().put(SimpleJob.DELAY_TIME, timeDelay);
 
-      Trigger trigger = newTrigger().withIdentity("trigger_" + count, "group_1")
-          .startAt(futureDate((10000 + (count * 100)), IntervalUnit.MILLISECOND)) // space fire times a small bit
-          .build();
+      Trigger trigger = newTrigger()
+              .withIdentity("trigger_" + count, "group_1")
+              .startAt(futureDate((10000 + (count * 100)), IntervalUnit.MILLISECOND)) // space fire times a small bit
+              .build();
 
       sched.scheduleJob(job, trigger);
       if (count % 25 == 0) {

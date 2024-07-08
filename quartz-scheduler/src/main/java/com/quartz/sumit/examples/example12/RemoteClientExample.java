@@ -1,21 +1,4 @@
-/* 
- * All content copyright Terracotta, Inc., unless otherwise indicated. All rights reserved. 
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not 
- * use this file except in compliance with the License. You may obtain a copy 
- * of the License at 
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0 
- *   
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT 
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- * License for the specific language governing permissions and limitations 
- * under the License.
- * 
- */
- 
-package org.quartz.examples.example12;
+package com.quartz.sumit.examples.example12;
 
 import static org.quartz.CronScheduleBuilder.cronSchedule;
 import static org.quartz.JobBuilder.newJob;
@@ -54,7 +37,7 @@ import org.slf4j.LoggerFactory;
  * Port # used for RMI connection can be modified in the example's
  * property files
  *
- * @author James House, Bill Kratzer
+ * @author Sumit Dhanorkar
  */
 public class RemoteClientExample {
 
@@ -77,7 +60,7 @@ public class RemoteClientExample {
         Trigger trigger = newTrigger()
             .withIdentity("remotelyAddedTrigger", "default")
             .forJob(job.getKey())
-            .withSchedule(cronSchedule("/5 * * ? * *"))
+            .withSchedule(cronSchedule("0/5 * * * * ?"))
             .build();
 
         // schedule the job
