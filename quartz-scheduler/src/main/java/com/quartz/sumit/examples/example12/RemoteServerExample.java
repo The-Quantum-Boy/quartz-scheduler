@@ -7,6 +7,10 @@ import org.quartz.impl.StdSchedulerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
+
 /**
  *  This example demonstrates how Quartz can be used in a client/server
  *  environment to remotely scheudle jobs on a remote server using
@@ -24,20 +28,28 @@ import org.slf4j.LoggerFactory;
  *  Port # used for RMI connection can be modified in the example's
  *  property files
  *
- * @author Sumit dhanorkar
+ * @author Sumit Dhanorkar
  */
 public class RemoteServerExample {
 
   /**
    * This example will spawn a large number of jobs to run
-   * 
-   * @author Sumit dhanorkar
+   *
+   * @author James House, Bill Kratzer
    */
   public void run() throws Exception {
     Logger log = LoggerFactory.getLogger(RemoteServerExample.class);
 
+    Properties properties = new Properties();
+    try (FileInputStream fis = new FileInputStream("C:\\Users\\HP\\Documents\\Learning\\Spring boot\\quartz-schedular\\quartz-scheduler\\src\\main\\resources\\com.quartz.sumit.examples\\example12\\server.properties")) {
+      properties.load(fis);
+    } catch (IOException e) {
+      log.error("Error loading properties file: " + e.getMessage());
+      return;
+    }
+
     // First we must get a reference to a scheduler
-    SchedulerFactory sf = new StdSchedulerFactory();
+    SchedulerFactory sf = new StdSchedulerFactory(properties);
     Scheduler sched = sf.getScheduler();
 
     log.info("------- Initialization Complete -----------");
@@ -51,12 +63,13 @@ public class RemoteServerExample {
 
     log.info("------- Started Scheduler -----------------");
 
-    log.info("------- Waiting ten minutes... ------------");
+    log.info("------- Waiting 1 minutes... ------------");
 
     // wait five minutes to give our jobs a chance to run
     try {
 //      Thread.sleep(600L * 1000L);
       Thread.sleep(100L * 1000L);
+
     } catch (Exception e) {
       //
     }

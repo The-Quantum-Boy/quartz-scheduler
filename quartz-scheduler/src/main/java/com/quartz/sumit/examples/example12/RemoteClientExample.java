@@ -13,11 +13,15 @@ import org.quartz.impl.StdSchedulerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
+
 /**
- * This example is a client program that will remotely 
- * talk to the scheduler to schedule a job.   In this 
- * example, we will need to use the JDBC Job Store.  The 
- * client will connect to the JDBC Job Store remotely to 
+ * This example is a client program that will remotely
+ * talk to the scheduler to schedule a job.   In this
+ * example, we will need to use the JDBC Job Store.  The
+ * client will connect to the JDBC Job Store remotely to
  * schedule the job.
  *
  * This example demonstrates how Quartz can be used in a client/server
@@ -37,7 +41,7 @@ import org.slf4j.LoggerFactory;
  * Port # used for RMI connection can be modified in the example's
  * property files
  *
- * @author Sumit Dhanorkar
+ * @author Sumit dhanorkar
  */
 public class RemoteClientExample {
 
@@ -45,23 +49,31 @@ public class RemoteClientExample {
 
         Logger log = LoggerFactory.getLogger(RemoteClientExample.class);
 
+        Properties properties = new Properties();
+        try (FileInputStream fis = new FileInputStream("C:\\Users\\HP\\Documents\\Learning\\Spring boot\\quartz-schedular\\quartz-scheduler\\src\\main\\resources\\com.quartz.sumit.examples\\example12\\client.properties")) {
+            properties.load(fis);
+        } catch (IOException e) {
+            log.error("Error loading properties file: " + e.getMessage());
+            return;
+        }
+
         // First we must get a reference to a scheduler
-        SchedulerFactory sf = new StdSchedulerFactory();
+        SchedulerFactory sf = new StdSchedulerFactory(properties);
         Scheduler sched = sf.getScheduler();
 
         // define the job and ask it to run
         JobDetail job = newJob(SimpleJob.class)
-            .withIdentity("remotelyAddedJob", "default")
-            .build();
-        
+                .withIdentity("remotelyAddedJob", "default")
+                .build();
+
         JobDataMap map = job.getJobDataMap();
         map.put("msg", "Your remotely added job has executed!");
-        
+
         Trigger trigger = newTrigger()
-            .withIdentity("remotelyAddedTrigger", "default")
-            .forJob(job.getKey())
-            .withSchedule(cronSchedule("0/5 * * * * ?"))
-            .build();
+                .withIdentity("remotelyAddedTrigger", "default")
+                .forJob(job.getKey())
+                .withSchedule(cronSchedule("/5 * * ? * *"))
+                .build();
 
         // schedule the job
         sched.scheduleJob(job, trigger);
